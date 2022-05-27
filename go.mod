@@ -25,4 +25,4 @@ require (
 	golang.org/x/tools v0.1.9 // indirect
 )
 
-replace github.com/sjwhitworth/golearn v0.0.0-20211014193759-a8b69c276cd8 => github.com/cela2/golearn v1.0.2
+replace github.com/sjwhitworth/golearn v0.0.0-20211014193759-a8b69c276cd8 => github.com/cela2/golearn v1.0.4
