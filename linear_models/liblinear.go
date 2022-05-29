@@ -1,20 +1,19 @@
 package linear_models
-import (
-	"fmt"
-	"unsafe"
-)
-
 /*
 #include "linear.h"
 */
 import "C"
 
+import (
+	"fmt"
+	"unsafe"
+)
 type Problem struct {
-	c_prob C.struct_problem
+	C_prob C.struct_problem
 }
 
 type Parameter struct {
-	c_param C.struct_parameter
+	C_param C.struct_parameter
 }
 
 type Model struct {
@@ -34,41 +33,41 @@ const (
 
 func NewParameter(solver_type int, f float64, eps float64) *Parameter {
 	param := Parameter{}
-	param.c_param.solver_type = C.int(solver_type)
-	param.c_param.eps = C.double(eps)
-	param.c_param.C = C.double(f)
-	param.c_param.nr_weight = C.int(0)
-	param.c_param.weight_label = nil
-	param.c_param.weight = nil
+	param.C_param.solver_type = C.int(solver_type)
+	param.C_param.eps = C.double(eps)
+	param.C_param.C = C.double(f)
+	param.C_param.nr_weight = C.int(0)
+	param.C_param.weight_label = nil
+	param.C_param.weight = nil
 
 	return &param
 }
 
 func NewProblem(X [][]float64, y []float64, bias float64) *Problem {
 	prob := Problem{}
-	prob.c_prob.l = C.int(len(X))
-	prob.c_prob.n = C.int(len(X[0]) + 1)
+	prob.C_prob.l = C.int(len(X))
+	prob.C_prob.n = C.int(len(X[0]) + 1)
 
-	prob.c_prob.x = convert_features(X, bias)
+	prob.C_prob.x = convert_features(X, bias)
 	c_y := make([]C.double, len(y))
 	for i := 0; i < len(y); i++ {
 		c_y[i] = C.double(y[i])
 	}
-	prob.c_prob.y = &c_y[0]
-	prob.c_prob.bias = C.double(-1)
+	prob.C_prob.y = &c_y[0]
+	prob.C_prob.bias = C.double(-1)
 
 	return &prob
 }
 
 func Train(prob *Problem, param *Parameter) *Model {
 	libLinearHookPrintFunc() // Sets up logging
-	tmpCProb := &prob.c_prob
-	tmpCParam := &param.c_param
+	tmpCProb := &prob.C_prob
+	tmpCParam := &param.C_param
 	return &Model{unsafe.Pointer(C.train(tmpCProb, tmpCParam))}
 }
 
 func Export(model *Model, filePath string) error {
-	status := C.save_model(C.CString(filePath), (*C.struct_model)(model.c_model))
+	status := C.save_model(C.CString(filePath), (*C.struct_model)(model.C_model))
 	if status != 0 {
 		return fmt.Errorf("Problem occured during export to %s (status was %d)", filePath, status)
 	}
@@ -76,8 +75,8 @@ func Export(model *Model, filePath string) error {
 }
 
 func Load(model *Model, filePath string) error {
-	model.c_model = unsafe.Pointer(C.load_model(C.CString(filePath)))
-	if model.c_model == nil {
+	model.C_model = unsafe.Pointer(C.load_model(C.CString(filePath)))
+	if model.C_model == nil {
 		return fmt.Errorf("Something went wrong")
 	}
 	return nil
@@ -85,7 +84,7 @@ func Load(model *Model, filePath string) error {
 
 func Predict(model *Model, x []float64) float64 {
 	c_x := convert_vector(x, 0)
-	c_y := C.predict((*C.struct_model)(model.c_model), c_x)
+	c_y := C.predict((*C.struct_model)(model.C_model), c_x)
 	y := float64(c_y)
 	return y
 }
