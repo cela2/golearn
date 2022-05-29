@@ -17,7 +17,7 @@ type Parameter struct {
 }
 
 type Model struct {
-	c_model unsafe.Pointer
+	C_model unsafe.Pointer
 }
 
 const (
