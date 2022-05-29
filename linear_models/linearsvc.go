@@ -174,9 +174,9 @@ func (lr *LinearSVC) Fit(X base.FixedDataGrid) error {
 
 	// Train
 	prob := NewProblem(problemVec, labelVec, 0)
-	lr.param.c_param.nr_weight = C.int(len(weightVec))
-	lr.param.c_param.weight_label = &(weightClasses[0])
-	lr.param.c_param.weight = (*C.double)(unsafe.Pointer(&weightVec[0]))
+	lr.param.C_param.nr_weight = C.int(len(weightVec))
+	lr.param.C_param.weight_label = &(weightClasses[0])
+	lr.param.C_param.weight = (*C.double)(unsafe.Pointer(&weightVec[0]))
 
 	//	lr.param.weights = (*C.double)unsafe.Pointer(&(weightVec[0]));
 	lr.model = Train(prob, lr.param)
