@@ -1,11 +1,13 @@
 package linear_models
+import (
+	"fmt"
+	"unsafe"
+)
 
 /*
 #include "linear.h"
 */
 import "C"
-import "fmt"
-import "unsafe"
 
 type Problem struct {
 	c_prob C.struct_problem
