@@ -1,5 +1,10 @@
 package linear_models
 
+/*
+#include "linear.h"
+*/
+import "C"
+
 import (
 	"errors"
 	"fmt"
